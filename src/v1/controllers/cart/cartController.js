@@ -5,16 +5,33 @@ const cartController = {
   async getUserCart(req, res, next) {
     try {
       const userId = req.user.id;
-      const cart = await prisma.cart.findFirst({
+      const user = await prisma.user.findUnique({
         where: {
-          userId,
+          id: userId,
+        },
+        select: {
+          cart: {
+            select: {
+              id: true,
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  description: true,
+                  image: true,
+                  category: true,
+                },
+              },
+            },
+          },
         },
       });
-      console.log(cart);
-      if (cart === null) {
-        throw createError.NotFound("Cart not found");
-      }
-      customResponse(res, 200, "Cart fetched successfully", cart);
+      console.log(user.cart);
+      res.status(200).json({
+        status: "success",
+        message: user.cart,
+      });
     } catch (err) {
       console.log(err);
       next(err);
@@ -36,6 +53,35 @@ const cartController = {
       res.json(customResponse(200, "Product added to cart successfully"));
     } catch (err) {
       console.log(err);
+    }
+  },
+
+  async deleteFromCart(req, res, next) {
+    try {
+      const userId = req.user.id;
+      const { productId } = req.body;
+
+      const cart = await prisma.singleProductInCart.findFirst({
+        where: {
+          productId,
+          userId,
+        },
+      });
+
+      if (!cart) {
+        throw createError.NotFound("Product not found in cart");
+      }
+
+      await prisma.singleProductInCart.delete({
+        where: {
+          id: cart.id,
+        },
+      });
+
+      res.json(customResponse(200, "Product deleted from cart successfully"));
+    } catch (err) {
+      console.log(err);
+      next(err);
     }
   },
 };

@@ -11,4 +11,6 @@ router.post(
   productController.createCategory
 );
 router.post("/createOrder", authMiddleware, orderController.createOrder);
+router.get("/:categoryId", productController.getProductsByCategory);
+router.get("/get-categories", productController.getCategories);
 export default router;

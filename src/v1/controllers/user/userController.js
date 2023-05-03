@@ -10,7 +10,20 @@ const userController = {
         },
         include: {
           cart: true,
-          order: true,
+          order: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  description: true,
+                  image: true,
+                  category: true,
+                },
+              },
+            },
+          },
         },
       });
       res.json(customResponse(200, user));
