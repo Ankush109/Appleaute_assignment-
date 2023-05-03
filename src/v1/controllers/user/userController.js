@@ -32,5 +32,14 @@ const userController = {
       return next(createError.InternalServerError());
     }
   },
+  async getUsers(req, res, next) {
+    try {
+      const users = await prisma.user.findMany();
+      res.json(customResponse(200, users));
+    } catch (err) {
+      console.log(err);
+      return next(createError.InternalServerError());
+    }
+  },
 };
 export default userController;
