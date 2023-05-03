@@ -23,22 +23,15 @@ const cartController = {
   async addToCart(req, res, next) {
     try {
       const userId = req.user.id;
-      const user = await prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
-        include: {
-          cart: true,
-        },
-      });
+
       const { productId } = req.body;
-      const product = await prisma.product.findUnique({
-        where: {
-          id: productId,
+
+      await prisma.singleProductInCart.create({
+        data: {
+          productId,
+          userId,
         },
       });
-      console.log(user);
-      console.log(product);
 
       res.json(customResponse(200, "Product added to cart successfully"));
     } catch (err) {
