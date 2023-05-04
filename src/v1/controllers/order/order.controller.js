@@ -26,7 +26,7 @@ const orderController = {
       customResponse(res, 200, "Order created successfully");
     } catch (err) {
       console.log(err);
-      next(createError.InternalServerError());
+      return next(createError.InternalServerError(err.message));
     }
   },
 };

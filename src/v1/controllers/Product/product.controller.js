@@ -56,10 +56,12 @@ const productController = {
           categoryId,
         },
       });
+      if (!categoryId) {
+        return next(createError.BadRequest("Category id is required"));
+      }
       res.json(customResponse(200, product));
     } catch (err) {
-      console.log(err);
-      return next(createError.InternalServerError());
+      return next(createError.InternalServerError(err.message));
     }
   },
   async getProducts(req, res, next) {
@@ -68,7 +70,7 @@ const productController = {
       res.json(customResponse(200, products));
     } catch (err) {
       console.log(err);
-      return next(createError.InternalServerError());
+      return next(createError.InternalServerError(err.message));
     }
   },
 };
